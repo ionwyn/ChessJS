@@ -4,7 +4,74 @@ statusEl = $('#status'),
 fenEl = $('#fen'),
 pgnEl = $('#pgn');
 
+
+var ZobristTable = new Array();
+ZobristTable[0] = new Array();
+ZobristTable[0][0] = new Array();
+
+
 /*The "AI" part starts here */
+
+var indexOf(piece) {
+    if (piece=='P')
+        return 0;
+    if (piece=='N')
+        return 1;
+    if (piece=='B')
+        return 2;
+    if (piece=='R')
+        return 3;
+    if (piece=='Q')
+        return 4;
+    if (piece=='K')
+        return 5;
+    if (piece=='p')
+        return 6;
+    if (piece=='n')
+        return 7;
+    if (piece=='b')
+        return 8;
+    if (piece=='r')
+        return 9;
+    if (piece=='q')
+        return 10;
+    if (piece=='k')
+        return 11;
+    else
+        return -1;
+}
+
+function getRandomInt() {
+  return Math.floor(Math.random() * Math.floor(Number.MAX_SAFE_INTEGER));
+}
+
+var initTable = function() {
+  for (var i = 0; i < 8; i++) {
+    for (var j = 0; j < 8; j++) {
+      for (var k = 0; k < 12; k++) {
+        ZobristTable[i][j][k] = getRandomInt();
+      }
+    }
+  }
+}
+
+function computeHash(board)
+{
+    var h = 0;
+    for (int i = 0; i<8; i++)
+    {
+        for (int j = 0; j<8; j++)
+        {
+            if (board[i][j]!='-')
+            {
+                int piece = indexOf(board[i][j]);
+                h ^= ZobristTable[i][j][piece];
+            }
+        }
+    }
+    return h;
+}
+
 
 var minimaxRoot =function(depth, game, isMaximisingPlayer) {
 
@@ -235,6 +302,7 @@ var onDrop = function (source, target) {
     }
     window.setTimeout(makeBestMove, 250);
     updateStatus();
+
 };
 
 var onSnapEnd = function() {
