@@ -4,8 +4,18 @@ statusEl = $('#status'),
 fenEl = $('#fen'),
 pgnEl = $('#pgn');
 
+var transTable = {
+	hashValue: Number,
+	depth: Number,
+	entry_type: {
+		exact: true,
+		lower_bound: true,
+		upper_bound: true
+	},
+	moveScore: Number
+}
 
-ZobristTable = new Array();
+var ZobristTable = new Array();
 for (var i = 0; i < 8; i++) {
   ZobristTable[i] = new Array();
   for (var j = 0; j < 12; j++) {
@@ -53,19 +63,19 @@ var initTable = function () {
   for (var i = 0; i < 8; i++) {
     for (var j = 0; j < 8; j++) {
       for (var k = 0; k < 12; k++) {
-        ZobristTable[i][j][k] = 2;
+        ZobristTable[i][j][k] = getRandomInt();
       }
     }
   }
 }
 
-function computeHash(board)
+function computeHash()
 {
     var h = 0;
     for (var i = 0; i<8; i++) {
         for (var j = 0; j<8; j++)
         {
-            if (board[i][j]!= null)
+            if (game.board()[i][j]!= null)
             {
                 var piece = indexOf(game.board()[i][j].type);
                 h ^= ZobristTable[i][j][piece];
