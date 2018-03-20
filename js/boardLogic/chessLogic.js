@@ -1599,6 +1599,18 @@ var Chess = function(fen) {
             return pretty_move;
         },
 
+        prettify: function(move_obj, options) {
+          var pretty_move = make_pretty(move_obj);
+
+          return pretty_move;
+        },
+
+        to_san: function(move_obj, options) {
+          var pretty_move = move_to_san(move_obj);
+
+          return pretty_move;
+        },
+
         ugly_move: function(move_obj, options) {
             var pretty_move = make_pretty(move_obj);
             make_move(move_obj);
