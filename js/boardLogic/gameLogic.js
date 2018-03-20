@@ -1,9 +1,4 @@
-var board,
-game = new Chess(),
-statusEl = $('#status'),
-fenEl = $('#fen'),
-pgnEl = $('#pgn');
-
+// Transposition table
 var transTable = {
 	hashValue: Number,
 	depth: Number,
@@ -15,6 +10,7 @@ var transTable = {
 	moveScore: Number
 }
 
+// Zobrist HashTable
 var ZobristTable = new Array();
 for (var i = 0; i < 8; i++) {
   ZobristTable[i] = new Array();
@@ -23,9 +19,39 @@ for (var i = 0; i < 8; i++) {
   }
 }
 
+function getRandomInt() {
+  return Math.floor(Math.random() * Math.floor(Number.MAX_SAFE_INTEGER));
+}
 
-/*The "AI" part starts here */
+var initTable = function () {
+  for (var i = 0; i < 8; i++) {
+    for (var j = 0; j < 8; j++) {
+      for (var k = 0; k < 12; k++) {
+        ZobristTable[i][j][k] = getRandomInt();
+      }
+    }
+  }
+}
 
+function computeHash(currentBoard)
+{
+    var h = 0;
+    for (var i = 0; i<8; i++) {
+        for (var j = 0; j<8; j++)
+        {
+            if (currentBoard[i][j]!= null)
+            {
+                var piece = indexOf(currentBoard[i][j].type);
+                h ^= ZobristTable[i][j][piece];
+            }
+        }
+    }
+    return h;
+}
+
+
+
+// Lookup stuff
 function indexOf(piece) {
     if (piece=='P')
         return 0;
@@ -54,101 +80,6 @@ function indexOf(piece) {
     else
         return -1;
 }
-
-function getRandomInt() {
-  return Math.floor(Math.random() * Math.floor(Number.MAX_SAFE_INTEGER));
-}
-
-var initTable = function () {
-  for (var i = 0; i < 8; i++) {
-    for (var j = 0; j < 8; j++) {
-      for (var k = 0; k < 12; k++) {
-        ZobristTable[i][j][k] = getRandomInt();
-      }
-    }
-  }
-}
-
-function computeHash()
-{
-    var h = 0;
-    for (var i = 0; i<8; i++) {
-        for (var j = 0; j<8; j++)
-        {
-            if (game.board()[i][j]!= null)
-            {
-                var piece = indexOf(game.board()[i][j].type);
-                h ^= ZobristTable[i][j][piece];
-            }
-        }
-    }
-    return h;
-}
-
-
-var minimaxRoot =function(depth, game, isMaximisingPlayer) {
-
-    var newGameMoves = game.ugly_moves();
-    var bestMove = -9999;
-    var bestMoveFound;
-
-    for(var i = 0; i < newGameMoves.length; i++) {
-        var newGameMove = newGameMoves[i]
-        game.ugly_move(newGameMove);
-        var value = minimax(depth - 1, game, -10000, 10000, !isMaximisingPlayer);
-        game.undo();
-        if(value >= bestMove) {
-            bestMove = value;
-            bestMoveFound = newGameMove;
-        }
-    }
-    return bestMoveFound;
-};
-
-var minimax = function (depth, game, alpha, beta, isMaximisingPlayer) {
-    positionCount++;
-    if (depth === 0) {
-        return -evaluateBoard(game.board());
-    }
-
-    var newGameMoves = game.ugly_moves();
-
-    if (isMaximisingPlayer) {
-        var bestMove = -9999;
-        for (var i = 0; i < newGameMoves.length; i++) {
-            game.ugly_move(newGameMoves[i]);
-            bestMove = Math.max(bestMove, minimax(depth - 1, game, alpha, beta, !isMaximisingPlayer));
-            game.undo();
-            alpha = Math.max(alpha, bestMove);
-            if (beta <= alpha) {
-                return bestMove;
-            }
-        }
-        return bestMove;
-    } else {
-        var bestMove = 9999;
-        for (var i = 0; i < newGameMoves.length; i++) {
-            game.ugly_move(newGameMoves[i]);
-            bestMove = Math.min(bestMove, minimax(depth - 1, game, alpha, beta, !isMaximisingPlayer));
-            game.undo();
-            beta = Math.min(beta, bestMove);
-            if (beta <= alpha) {
-                return bestMove;
-            }
-        }
-        return bestMove;
-    }
-};
-
-var evaluateBoard = function (board) {
-    var totalEvaluation = 0;
-    for (var i = 0; i < 8; i++) {
-        for (var j = 0; j < 8; j++) {
-            totalEvaluation = totalEvaluation + getPieceValue(board[i][j], i ,j);
-        }
-    }
-    return totalEvaluation;
-};
 
 var reverseArray = function(array) {
     return array.slice().reverse();
@@ -232,7 +163,69 @@ var kingEvalWhite = [
 var kingEvalBlack = reverseArray(kingEvalWhite);
 
 
+var minimaxRoot =function(depth, game, isMaximisingPlayer) {
 
+    var newGameMoves = game.ugly_moves();
+    var bestMove = -9999;
+    var bestMoveFound;
+
+    for(var i = 0; i < newGameMoves.length; i++) {
+        var newGameMove = newGameMoves[i]
+        game.ugly_move(newGameMove);
+        var value = minimax(depth - 1, game, -10000, 10000, !isMaximisingPlayer);
+        game.undo();
+        if(value >= bestMove) {
+            bestMove = value;
+            bestMoveFound = newGameMove;
+        }
+    }
+    return bestMoveFound;
+};
+
+var minimax = function (depth, game, alpha, beta, isMaximisingPlayer) {
+    positionCount++;
+    if (depth === 0) {
+        return -evaluateBoard(game.board());
+    }
+
+    var newGameMoves = game.ugly_moves();
+
+    if (isMaximisingPlayer) {
+        var bestMove = -9999;
+        for (var i = 0; i < newGameMoves.length; i++) {
+            game.ugly_move(newGameMoves[i]);
+            bestMove = Math.max(bestMove, minimax(depth - 1, game, alpha, beta, !isMaximisingPlayer));
+            game.undo();
+            alpha = Math.max(alpha, bestMove);
+            if (beta <= alpha) {
+                return bestMove;
+            }
+        }
+        return bestMove;
+    } else {
+        var bestMove = 9999;
+        for (var i = 0; i < newGameMoves.length; i++) {
+            game.ugly_move(newGameMoves[i]);
+            bestMove = Math.min(bestMove, minimax(depth - 1, game, alpha, beta, !isMaximisingPlayer));
+            game.undo();
+            beta = Math.min(beta, bestMove);
+            if (beta <= alpha) {
+                return bestMove;
+            }
+        }
+        return bestMove;
+    }
+};
+
+var evaluateBoard = function (board) {
+    var totalEvaluation = 0;
+    for (var i = 0; i < 8; i++) {
+        for (var j = 0; j < 8; j++) {
+            totalEvaluation = totalEvaluation + getPieceValue(board[i][j], i ,j);
+        }
+    }
+    return totalEvaluation;
+};
 
 var getPieceValue = function (piece, x, y) {
     if (piece === null) {
@@ -260,145 +253,6 @@ var getPieceValue = function (piece, x, y) {
 };
 
 
-/* board visualization and games state handling */
 
-var onDragStart = function (source, piece, position, orientation) {
-    if (game.in_checkmate() === true || game.in_draw() === true ||
-        piece.search(/^b/) !== -1) {
-        return false;
-    }
-};
-
-var makeBestMove = function () {
-    var bestMove = getBestMove(game);
-    game.ugly_move(bestMove);
-    board.position(game.fen());
-    updateStatus();
-    if (game.game_over()) {
-        alert('Game over');
-    }
-};
-
-
-var positionCount;
-var getBestMove = function (game) {
-    if (game.game_over()) {
-        alert('Game over');
-    }
-
-    positionCount = 0;
-    var depth = 3
-
-    var d = new Date().getTime();
-    var bestMove = minimaxRoot(depth, game, true);
-    var d2 = new Date().getTime();
-    var moveTime = (d2 - d);
-    var positionsPerS = ( positionCount * 1000 / moveTime);
-
-    $('#position-count').text(positionCount);
-    $('#time').text(moveTime/1000 + 's');
-    $('#positions-per-s').text(positionsPerS);
-    return bestMove;
-};
-
-var onDrop = function (source, target) {
-
-    var move = game.move({
-        from: source,
-        to: target,
-        promotion: 'q'
-    });
-
-    removeGreySquares();
-    if (move === null) {
-        return 'snapback';
-    }
-    window.setTimeout(makeBestMove, 250);
-    updateStatus();
-
-};
-
-var onSnapEnd = function() {
-board.position(game.fen());
-};
-
-var updateStatus = function() {
-var status = '';
-
-var moveColor = 'White';
-if (game.turn() === 'b') {
-  moveColor = 'Black';
-}
-
-// checkmate?
-if (game.in_checkmate() === true) {
-  status = 'Game over, ' + moveColor + ' is in checkmate.';
-}
-
-// draw?
-else if (game.in_draw() === true) {
-  status = 'Game over, drawn position';
-}
-
-// game still on
-else {
-  status = moveColor + ' to move';
-
-  // check?
-  if (game.in_check() === true) {
-    status += ', ' + moveColor + ' is in check';
-  }
-}
-
-statusEl.html(status);
-fenEl.html(game.fen());
-pgnEl.html(game.pgn());
-};
-
-var onMouseoverSquare = function(square, piece) {
-    var moves = game.moves({
-        square: square,
-        verbose: true
-    });
-
-    if (moves.length === 0) return;
-
-    greySquare(square);
-
-    for (var i = 0; i < moves.length; i++) {
-        greySquare(moves[i].to);
-    }
-};
-
-var onMouseoutSquare = function(square, piece) {
-    removeGreySquares();
-};
-
-var removeGreySquares = function() {
-    $('#board .square-55d63').css('background', '');
-};
-
-var greySquare = function(square) {
-    var squareEl = $('#board .square-' + square);
-
-    var background = '#a9a9a9';
-    if (squareEl.hasClass('black-3c85d') === true) {
-        background = '#696969';
-    }
-
-    squareEl.css('background', background);
-};
-
-var cfg = {
-    draggable: true,
-    position: 'start',
-    onDragStart: onDragStart,
-    onDrop: onDrop,
-    onMouseoutSquare: onMouseoutSquare,
-    onMouseoverSquare: onMouseoverSquare,
-    onSnapEnd: onSnapEnd
-};
-
-board = ChessBoard('board', cfg);
 initTable();
 var hashValue = computeHash(game.board())
