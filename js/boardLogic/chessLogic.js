@@ -1605,6 +1605,8 @@ var Chess = function(fen) {
           return pretty_move;
         },
 
+        // Needs fixing.
+        // Doesn't work for captures... why???
         to_san: function(move_obj, options) {
           var pretty_move = move_to_san(move_obj);
 
