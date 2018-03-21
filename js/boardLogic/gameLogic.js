@@ -1,13 +1,27 @@
 // Transposition table
-var transTable = {
-	hashValue: Number,
-	depth: Number,
-	entry_type: {
-		exact: true,
-		lower_bound: true,
-		upper_bound: true
-	},
-	moveScore: Number
+var tableSize = 100000;
+var exact = 0;
+var upper_bound = 1;
+var lower_bound = 2;
+
+Number.prototype.mod = function(n) {
+    return ((this%n)+n)%n;
+};
+
+function mod(n, m) {
+        return ((n % m) + m) % m;
+}
+
+var transTable = [];
+
+for (var i = 0; i < tableSize; i++) {
+	transTable.push({
+		hashValue: Number,
+		depth: Number,
+		flag: Number,
+		moveScore: Number,
+		bestMove: String
+	})
 }
 
 // Zobrist HashTable
@@ -172,7 +186,7 @@ var minimaxRoot =function(depth, game, isMaximisingPlayer) {
     for(var i = 0; i < newGameMoves.length; i++) {
         var newGameMove = newGameMoves[i]
         game.ugly_move(newGameMove);
-        var value = minimax(depth - 1, game, -10000, 10000, !isMaximisingPlayer);
+        var value = minimax(depth - 1, game, -10000, 10000, !isMaximisingPlayer, newGameMove);
         game.undo();
         if(value >= bestMove) {
             bestMove = value;
@@ -182,43 +196,90 @@ var minimaxRoot =function(depth, game, isMaximisingPlayer) {
     return bestMoveFound;
 };
 
-var minimax = function (depth, game, alpha, beta, isMaximisingPlayer) {
+var recordHash = function (sdepth, val, hashV, move, flag) {
+	var hashIndex = mod(hashV, tableSize);
+
+	transTable[hashIndex].depth = sdepth;
+	transTable[hashIndex].moveScore = val;
+	transTable[hashIndex].hashValue = hashV;
+	transTable[hashIndex].bestMove = move;
+	transTable[hashIndex].flag = flag;
+}
+
+var minimax = function (depth, game, alpha, beta, isMaximisingPlayer, newMove) {
     positionCount++;
     if (depth === 0) {
-        return -evaluateBoard(game.board());
+				var eval = -evaluateBoard(game.board());
+				hashValue = computeHash(game.board());
+				recordHash(depth, eval, hashValue, newMove, exact);
+        return eval;
     }
+		hashValue = computeHash(game.board());
+		index = mod(hashValue, tableSize);
+		  // && transTable[index].depth >= depth
+		if  (transTable[index].hashValue === hashValue) {
+			if (transTable[index].flag === 0) {
+				console.log("Move was " + transTable[index].bestMove);
+				return transTable[index].moveScore;
+			}
+			else if (transTable[index].flag === 2) {
+				if (transTable[index].moveScore >= beta) {
+					console.log("Move was " + transTable[index].bestMove);
+					return transTable[index].moveScore;
+				}
+				else {
+					return;
+				}
+			}
+			else if (transTable[index].flag === 1) {
+				if (transTable[index].moveScore <= alpha) {
+					console.log("Move was " + transTable[index].bestMove);
+					return transTable[index].moveScore;
+				}
+				else {
+					return;
+				}
+			}
+		}
 
     var newGameMoves = game.ugly_moves();
 
     if (isMaximisingPlayer) {
+				// console.log(alpha);
         var bestMove = -9999;
         for (var i = 0; i < newGameMoves.length; i++) {
 
             game.ugly_move(newGameMoves[i]);
-						hashValue = computeHash(game.board());
-
-            bestMove = Math.max(bestMove, minimax(depth - 1, game, alpha, beta, !isMaximisingPlayer));
+            bestMove = Math.max(bestMove, minimax(depth - 1, game, alpha, beta, !isMaximisingPlayer, newGameMoves[i]));
             game.undo();
-						hashValue = computeHash(game.board());
-
-
 
             alpha = Math.max(alpha, bestMove);
             if (beta <= alpha) {
+								// console.log(depth);
+								// console.log(alpha)
                 return bestMove;
             }
+						hashValue = computeHash(game.board());
+						recordHash(depth, alpha, hashValue, newGameMoves[i], lower_bound);
         }
         return bestMove;
     } else {
         var bestMove = 9999;
         for (var i = 0; i < newGameMoves.length; i++) {
             game.ugly_move(newGameMoves[i]);
-            bestMove = Math.min(bestMove, minimax(depth - 1, game, alpha, beta, !isMaximisingPlayer));
+						// hashValue = computeHash(game.board());
+            bestMove = Math.min(bestMove, minimax(depth - 1, game, alpha, beta, !isMaximisingPlayer, newGameMoves[i]));
             game.undo();
+						// console.log(bestMove);
             beta = Math.min(beta, bestMove);
             if (beta <= alpha) {
+								console.log(bestMove)
+								// hashValue = computeHash(game.board());
+								// recordHash(depth, beta, hashValue);
                 return bestMove;
             }
+						hashValue = computeHash(game.board());
+						recordHash(depth, beta, hashValue, newGameMoves[i], upper_bound);
         }
         return bestMove;
     }
@@ -270,22 +331,20 @@ var onDragStart = function (source, piece, position, orientation) {
 
 var makeBestMove = function () {
 
-		if (
-			(game.fen() ===
-		"rnbqkbnr/pppppppp/8/8/3P4/8/PPP1PPPP/RNBQKBNR b KQkq d3 0 1" ||
-		"rnbqkbnr/pppppppp/8/8/8/1P6/P1PPPPPP/RNBQKBNR b KQkq - 0 1" ||
-		"rnbqkbnr/pppppppp/8/8/2P5/8/PP1PPPPP/RNBQKBNR b KQkq c3 0 1" ||
-		"rnbqkbnr/pppppppp/8/8/8/6P1/PPPPPP1P/RNBQKBNR b KQkq - 0 1" ||
-		"rnbqkbnr/pppppppp/8/8/8/5N2/PPPPPPPP/RNBQKB1R b KQkq - 1 1") && flag === 0) {
-			game.move("f5");
-			board.position(game.fen());
-			updateStatus();
-			flag = 1;
-
-			return
-		}
-
-		console.log("asdasd")
+		// if (
+		// 	(game.fen() ===
+		// "rnbqkbnr/pppppppp/8/8/3P4/8/PPP1PPPP/RNBQKBNR b KQkq d3 0 1" ||
+		// "rnbqkbnr/pppppppp/8/8/8/1P6/P1PPPPPP/RNBQKBNR b KQkq - 0 1" ||
+		// "rnbqkbnr/pppppppp/8/8/2P5/8/PP1PPPPP/RNBQKBNR b KQkq c3 0 1" ||
+		// "rnbqkbnr/pppppppp/8/8/8/6P1/PPPPPP1P/RNBQKBNR b KQkq - 0 1" ||
+		// "rnbqkbnr/pppppppp/8/8/8/5N2/PPPPPPPP/RNBQKB1R b KQkq - 1 1") && flag === 0) {
+		// 	game.move("f5");
+		// 	board.position(game.fen());
+		// 	updateStatus();
+		// 	flag = 1;
+		//
+		// 	return
+		// }
 
     var bestMove = getBestMove(game);
     game.ugly_move(bestMove);
