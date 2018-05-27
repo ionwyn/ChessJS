@@ -1,0 +1,130 @@
+[33mcommit eb99d044bb18f84e8139d66d926bfd67e6d8a218[m
+Author: ionwyn <ionwynsean@gmail.com>
+Date:   Thu Mar 22 02:10:23 2018 -0700
+
+    Good code Easy life
+
+[33mcommit e97c2850a9e08f5ef93941dbce421f2cd48b53b7[m
+Author: ionwyn <ionwynsean@gmail.com>
+Date:   Thu Mar 22 00:50:04 2018 -0700
+
+    Keep calm and refactor
+
+[33mcommit c9bec61c7208c5d70ab54a6facc5b667715350b2[m
+Author: ionwyn <ionwynsean@gmail.com>
+Date:   Thu Mar 22 00:43:19 2018 -0700
+
+    Reorganized code for readability
+
+[33mcommit 4a496bf651f194dc80657056cb345a2ef2834bdc[m
+Author: ionwyn <ionwynsean@gmail.com>
+Date:   Wed Mar 21 02:56:10 2018 -0700
+
+    Issue in converting 0x88 move to san
+
+[33mcommit 9ff04c3e7cb9a0f6540f5c731dfe31daba51287c[m
+Author: ionwyn <ionwynsean@gmail.com>
+Date:   Wed Mar 21 02:54:17 2018 -0700
+
+    Maybe working Zobrist hash
+
+[33mcommit f4074ec4e230556d632a046e43e1b3531abad084[m
+Merge: 75c214a 2b50c9b
+Author: ionwyn <ionwynsean@gmail.com>
+Date:   Mon Mar 19 22:35:10 2018 -0700
+
+    Merge remote-tracking branch 'refs/remotes/origin/2d-zobrist'
+
+[33mcommit 2b50c9ba2f8d0fc4489102db3f00eca8edebf080[m
+Author: ionwyn <ionwynsean@gmail.com>
+Date:   Mon Mar 19 22:34:15 2018 -0700
+
+    I'm tired for today
+
+[33mcommit 75c214ade9c2cbb695d6ad84008fe93dc7ba1db8[m
+Author: ionwyn <ionwynsean@gmail.com>
+Date:   Mon Mar 19 19:35:37 2018 -0700
+
+    Redesign Zobrist Table
+
+[33mcommit 2f72460154d520e82e7096f2f48e9b9469427e7a[m
+Merge: b3db4a4 b4da22e
+Author: ionwyn <ionwynsean@gmail.com>
+Date:   Mon Mar 19 19:28:58 2018 -0700
+
+    Merge branch 'master' of https://github.com/ionwyn/ChessJS
+
+[33mcommit b3db4a43577782792432d76f7a87d8576a96646e[m
+Author: ionwyn <ionwynsean@gmail.com>
+Date:   Mon Mar 19 19:28:35 2018 -0700
+
+    Trying to figure board indexing
+
+[33mcommit b4da22e4b775d0595266f9f706ab391dad1d4b38[m
+Author: ionwyn <ionwynsean@gmail.com>
+Date:   Mon Mar 19 17:11:10 2018 -0700
+
+    Update Readme.md
+
+[33mcommit 68b60ea49a66cf13e2a55df470de7ecd726b96c1[m
+Author: ionwyn <ionwynsean@gmail.com>
+Date:   Sun Mar 18 18:25:15 2018 -0700
+
+    Added Transposition Table
+    
+    Next stop is embedding Zobrist hashes and Transposition table in Tree Search
+
+[33mcommit e55d954162fccf46b5b0a0f3d8dde5ad38d5e2a0[m
+Merge: 2a03a27 318cfb0
+Author: Naomi Zakimi <Naomi@Naomis-Air.unet.ca>
+Date:   Sun Mar 18 02:13:10 2018 -0700
+
+    yess
+
+[33mcommit 2a03a27407e9be69b84db2fc7398de5c1b0cb229[m
+Author: Naomi Zakimi <Naomi@Naomis-Air.unet.ca>
+Date:   Sun Mar 18 02:03:44 2018 -0700
+
+    yeas
+
+[33mcommit 8616ee35b090cbacec206fea98b813a669b508f9[m
+Author: Naomi Zakimi <Naomi@Naomis-Air.unet.ca>
+Date:   Sun Mar 18 02:00:22 2018 -0700
+
+    I'm tired im going to bed now
+
+[33mcommit f637bee2548c6eb19dab5b0540248787d8f9d5af[m
+Author: Naomi Zakimi <Naomi@Naomis-Air.unet.ca>
+Date:   Sun Mar 18 01:16:34 2018 -0700
+
+    On my way to Zobrist Hashing
+
+[33mcommit 318cfb0739cf9cc8c15fe45b081b784fd48a0450[m
+Author: ionwyn <ionwynsean@gmail.com>
+Date:   Sat Mar 17 01:59:47 2018 -0700
+
+    Update README.md
+
+[33mcommit 80a09f03ac69c1b56ae0b17455d4a564019f9457[m
+Author: Naomi Zakimi <Naomi@Naomis-Air.unet.ca>
+Date:   Sat Mar 17 01:58:34 2018 -0700
+
+    Converted Python to Javascript
+
+[33mcommit d89e8fb61e2dc05328bb17c707e41d84b390b8fe[m
+Author: Naomi Zakimi <Naomi@Naomis-Air.unet.ca>
+Date:   Sat Mar 17 00:51:43 2018 -0700
+
+    Done with game Logic
+
+[33mcommit 058a19c2ad2bcaa2832ab4413a6063699b68c662[m
+Author: Naomi Zakimi <Naomi@Naomis-Air.unet.ca>
+Date:   Sat Mar 17 00:46:56 2018 -0700
+
+    Added some game logic
+
+[33mcommit 36acbe81f9940bdef5db772f70d41f2c94e168a6[m
+Author: Naomi Zakimi <Naomi@Naomis-Air.unet.ca>
+Date:   Sat Mar 17 00:27:59 2018 -0700
+
+    First commit

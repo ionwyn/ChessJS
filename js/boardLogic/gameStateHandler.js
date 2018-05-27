@@ -1,21 +1,24 @@
+// UI and Game State Handler
+
+// On piece drop, do something.
 var onDrop = function(source, target) {
 
+  // When valid move
   var move = game.move({
     from: source,
     to: target,
     promotion: 'q'
   });
 
+  // If move is illegal, snapback to original square.
   removeGreySquares();
   if (move === null) {
     return 'snapback';
   }
 
-  window.setTimeout(makeBestMove, 250);
-  updateStatus();
-
 };
 
+// Triggered upon piece pickup
 var onDragStart = function(source, piece, position, orientation) {
   if (game.in_checkmate() === true || game.in_draw() === true ||
     piece.search(/^b/) !== -1) {
@@ -23,8 +26,10 @@ var onDragStart = function(source, piece, position, orientation) {
   }
 };
 
-
+// It's the computer's turn
 var onSnapEnd = function() {
+  window.setTimeout(makeBestMove, 250);
+  updateStatus();
   board.position(game.fen());
 };
 
@@ -64,6 +69,7 @@ function updateStatus() {
   pgnEl.html(game.pgn());
 };
 
+// Animation handler for mouse hovers
 var onMouseoverSquare = function(square, piece) {
   var moves = game.moves({
     square: square,

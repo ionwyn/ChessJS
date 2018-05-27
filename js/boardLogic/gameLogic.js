@@ -1,10 +1,13 @@
-// Game initialization
+// BEGIN : GAME INITIALIZATION
 game = new Chess(),
   statusEl = $('#status'),
   fenEl = $('#fen'),
   pgnEl = $('#pgn');
 
-// Search configuration
+/*************************************************************************/
+
+
+// BEGIN : SEARCH CONFIGURATION
 const global = {
   tableSize: 100000,
   exact: 0,
@@ -12,6 +15,8 @@ const global = {
   lower_bound: 2,
   searchDepth: 3
 };
+
+/********************************************************************* */
 
 // Because JavaScript built in modulo sucks!
 Number.prototype.mod = function(n) {
@@ -22,7 +27,7 @@ function mod(n, m) {
   return ((n % m) + m) % m;
 }
 
-// Transposition table initialization
+// BEGIN : INITIALIZE TRANSPOSITION TABLE
 const transTable = [];
 
 for (let i = 0; i < global.tableSize; i++) {
@@ -35,12 +40,12 @@ for (let i = 0; i < global.tableSize; i++) {
   })
 }
 
-// Zobrist HashTable initialization
-const ZobristTable = new Array();
+// ion HashTable initialization
+const ionTable = new Array();
 for (let i = 0; i < 8; i++) {
-  ZobristTable[i] = new Array();
+  ionTable[i] = new Array();
   for (let j = 0; j < 12; j++) {
-    ZobristTable[i][j] = new Array();
+    ionTable[i][j] = new Array();
   }
 }
 
@@ -49,46 +54,34 @@ function getRandomInt() {
   return Math.floor(Math.random() * Math.floor(Number.MAX_SAFE_INTEGER));
 }
 
+// Populate the table with big random integers.
 function initTable() {
   for (let i = 0; i < 8; i++) {
     for (let j = 0; j < 8; j++) {
       for (let k = 0; k < 12; k++) {
-        ZobristTable[i][j][k] = getRandomInt();
+        ionTable[i][j][k] = getRandomInt();
       }
     }
   }
 }
 
+/*********************************************************************** */
+
+// BEGIN : COMPUTE HASH
+// Based on current position respective to which pieces are on which square,
+// we use XOR hash, otherwise known as Zobrist Hashing
 function computeHash(currentBoard) {
   let h = 0;
   for (let i = 0; i < 8; i++) {
     for (let j = 0; j < 8; j++) {
       if (currentBoard[i][j] != null) {
         const piece = indexOf(currentBoard[i][j].type);
-        h ^= ZobristTable[i][j][piece];
+        h ^= ionTable[i][j][piece];
       }
     }
   }
   return h;
 }
-
-function minimaxRoot(depth, game, isMaximisingPlayer) {
-  const newGameMoves = game.ugly_moves();
-  let bestMove = -9999;
-  let bestMoveFound;
-
-  for (const newGameMove of newGameMoves) {
-    game.ugly_move(newGameMove);
-    const value = minimax(depth - 1, game, -10000, 10000, !isMaximisingPlayer, newGameMove);
-    game.undo();
-    if (value >= bestMove) {
-      bestMove = value;
-      bestMoveFound = newGameMove;
-    }
-  }
-
-  return bestMoveFound;
-};
 
 function recordHash(sdepth, val, hashV, move, flag) {
   const hashIndex = mod(hashV, global.tableSize);
@@ -99,6 +92,30 @@ function recordHash(sdepth, val, hashV, move, flag) {
   transTable[hashIndex].bestMove = move;
   transTable[hashIndex].flag = flag;
 }
+
+/********************************************************************** */
+
+
+// BEGIN : FUN RECURSIVE STUFF
+function makeMinimaxTree(depth, game, isMaximisingPlayer) {
+  const newGameMoves = game.ugly_moves();
+  let bestMove = -9999;
+  let bestMoveFound;
+
+  // To be honest, to be very honest, I've thought about making this process probabilistic.
+  // To think again, it's such a terrible
+  for (const newGameMove of newGameMoves) {
+    game.ugly_move(newGameMove);      // returns some arbitrary move that is possible in given turn
+    const value = minimax(depth - 1, game, -10000, 10000, !isMaximisingPlayer, newGameMove);
+    game.undo();
+    if (value >= bestMove) {
+      bestMove = value;
+      bestMoveFound = newGameMove;
+    }
+  }
+
+  return bestMoveFound;
+};
 
 function minimax(depth, game, alpha, beta, isMaximisingPlayer, newMove) {
   positionCount++;
@@ -201,10 +218,10 @@ function getPieceValue(piece, x, y) {
   return piece.color === 'w' ? absoluteValue : -absoluteValue;
 }
 
-/* board visualization and games state handling */
-
 function makeBestMove() {
 
+
+  // Originally, the idea is to play dutch defense (1..f5!!) against few first moves (d4, c4, f4, etc.)
   // if (
   // 	(game.fen() ===
   // "rnbqkbnr/pppppppp/8/8/3P4/8/PPP1PPPP/RNBQKBNR b KQkq d3 0 1" ||
@@ -241,7 +258,7 @@ function getBestMove(game) {
   const depth = global.searchDepth;
 
   const d = new Date().getTime();
-  const bestMove = minimaxRoot(depth, game, true);
+  const bestMove = makeMinimaxTree(depth, game, true);
   const d2 = new Date().getTime();
   const moveTime = (d2 - d);
   const positionsPerS = (positionCount * 1000 / moveTime);

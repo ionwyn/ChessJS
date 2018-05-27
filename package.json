@@ -1,0 +1,19 @@
+{
+  "name": "chess-js",
+  "version": "1.0.0",
+  "description": "A web application that aims to play chess like Ionwyn",
+  "main": "index.html",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ionwyn/ChessJS.git"
+  },
+  "author": "Ionwyn Sean",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ionwyn/ChessJS/issues"
+  },
+  "homepage": "https://github.com/ionwyn/ChessJS#readme"
+}

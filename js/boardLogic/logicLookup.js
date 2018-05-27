@@ -28,6 +28,7 @@ function indexOf(piece) {
     return -1;
 }
 
+// Handles black/white to move
 var reverseArray = function(array) {
   return array.slice().reverse();
 };
