@@ -120,10 +120,10 @@ function makeMinimaxTree(depth, game, isMaximisingPlayer) {
 function minimax(depth, game, alpha, beta, isMaximisingPlayer, newMove) {
   positionCount++;
   if (depth === 0) {
-    var eval = -evaluateBoard(game.board());
+    const evaluate = -evaluateBoard(game.board());
     hashValue = computeHash(game.board());
-    recordHash(depth, eval, hashValue, newMove, global.exact);
-    return eval;
+    recordHash(depth, evaluate, hashValue, newMove, global.exact);
+    return evaluate;
   }
   hashValue = computeHash(game.board());
   index = mod(hashValue, global.tableSize);
@@ -148,7 +148,7 @@ function minimax(depth, game, alpha, beta, isMaximisingPlayer, newMove) {
     }
   }
 
-  var newGameMoves = game.ugly_moves();
+  const newGameMoves = game.ugly_moves();
 
   if (isMaximisingPlayer) {
     var bestMove = -9999;
@@ -219,23 +219,6 @@ function getPieceValue(piece, x, y) {
 }
 
 function makeBestMove() {
-
-
-  // Originally, the idea is to play dutch defense (1..f5!!) against few first moves (d4, c4, f4, etc.)
-  // if (
-  // 	(game.fen() ===
-  // "rnbqkbnr/pppppppp/8/8/3P4/8/PPP1PPPP/RNBQKBNR b KQkq d3 0 1" ||
-  // "rnbqkbnr/pppppppp/8/8/8/1P6/P1PPPPPP/RNBQKBNR b KQkq - 0 1" ||
-  // "rnbqkbnr/pppppppp/8/8/2P5/8/PP1PPPPP/RNBQKBNR b KQkq c3 0 1" ||
-  // "rnbqkbnr/pppppppp/8/8/8/6P1/PPPPPP1P/RNBQKBNR b KQkq - 0 1" ||
-  // "rnbqkbnr/pppppppp/8/8/8/5N2/PPPPPPPP/RNBQKB1R b KQkq - 1 1") && flag === 0) {
-  // 	game.move("f5");
-  // 	board.position(game.fen());
-  // 	updateStatus();
-  // 	flag = 1;
-  //
-  // 	return
-  // }
 
   const bestMove = getBestMove(game);
   game.ugly_move(bestMove);
