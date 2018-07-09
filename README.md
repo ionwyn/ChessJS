@@ -26,6 +26,8 @@ There are no test cases, and there shouldn't be any.  Use Mathematical induction
 
 ## Notes before contributing
 
+Please take a look at **gameLogic.js**.  Other files are related to game rules and front-end work.
+
 I am building a chess engine; I am not interested in spending 10,000 hours to train your Neural Network.  I am interested in the clever ways in which we can improve the efficiency of the current traditional chess engine in progress here.
 
 ### What we have so far:
