@@ -39,10 +39,10 @@ I am building a chess engine; I am not interested in spending 10,000 hours to tr
 - Implement chess opening book
 
 
-## Authors
+## Contributors
 
 * **Ionwyn Sean** - *Initial work* - [Works Worth Wording](www.ionwyn.com)
-* **Kyle King** - *Advice*
+* **Kyle King** - *Optimization Advice on hashing*
 
 ## License
 
